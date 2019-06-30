@@ -1,0 +1,121 @@
+---
+output:
+  pdf_document: default
+  html_document: default
+  word_document: default
+---
+<center>
+  <h1>CS108 STATISTIS</h1>
+  <h1>Summer 2019</h1>
+  <h1>Assignment 1</h1>
+  <h1>Gurgen Hayrapetyan</h1>
+</center>
+
+### Load “Trucking_jobs.csv” datain your R environment.
+
+```{r}
+jobs <- read.csv("jobs.csv")
+```
+
+### How many observations are in the data set?
+
+We can find the number of observation by looking at length of one of the variables
+
+```{r}
+observations <- length(jobs$sex)
+print(observations)
+```
+
+### What are the variables/features and their data types? Indicate if they are categorical or quantitative variables.
+
+To answer this question we can use `str` function
+
+```{r}
+str(jobs)
+```
+
+From this we can see that `sex` and `title` variables are categorical while `earnings`, `age`, and `hiredyears` are quantative
+
+### What is the mean, standard deviation, median, and range of earnings.
+
+we can access earning from our dataset by `jobs$earnings`.
+
+```{r}
+earnings <- jobs$earnings
+earnings_mean <- mean(earnings)
+earnings_sd <- sqrt(var(earnings))
+earnings_median <- median(earnings)
+earnings_range <- range(earnings)[2] - range(earnings)[1]
+
+# code for visualizing the values
+
+data <- c(earnings_mean, earnings_sd, earnings_median, earnings_range)
+names(data) <- c(" Mean", "Standard Deviation", "Median", "Range")
+
+labelAll <- paste(names(data), ": ", data, "\n", sep="")
+cat(labelAll)
+```
+
+### Plot a scatterogram of earnings based on hire year
+
+Our Y-axis will be the hireyears X-axis the earnings
+
+```{r}
+x <- jobs$hiredyears
+y <- jobs$earnings
+plot(x, y, main = "Earnings based on years hired", xlab = "Years Hired", ylab = "Earnings")
+```
+
+### Plot the histogram of earnings by count and density
+
+We can plot the histgram by just using the `hist` function
+
+```{r}
+hist(earnings)
+```
+
+### Find quartiles, 80th quantile(percentile), and IQR of the earnings using quantiles function. What is the median
+
+```{r}
+quartiles <- quantile(earnings)
+quantile_80 <- quantile(earnings, probs = c(0.8))
+earnings_iqr <- IQR(earnings)
+```
+```{r}
+print(quartiles)
+print(quantile_80)
+print(earnings_iqr)
+```
+
+### Plot the boxplot of earnings and separate by sex. Find values of outliers.
+
+```{r}
+earnings <- jobs$earnings
+sex <- jobs$sex
+
+values <- boxplot(earnings ~ sex)
+
+outliers <- values$out
+print(outliers)
+```
+
+### Plot pie chart for percent male and female in the data set.
+
+```{r}
+# seperating our data by gender
+all_males <- subset(jobs, sex == "M")
+all_females <- subset(jobs, sex == "F")
+
+# getting number of observations in each sample
+all_observations <- length(jobs$sex)
+males <- round(length(all_males$sex) * 100 / all_observations)
+females <- round(length(all_females$sex) * 100 / all_observations)
+data <- c(males, females)
+
+# generating labels
+names(data) <- c("Male", "Female")
+labelAll <- paste(names(data), "\n", data, "%", sep="")
+
+# plotting the chart
+pie(data, main="Male/Female Ratio of Jobs", labels = labelAll)
+```
